@@ -1,0 +1,83 @@
+.screenshot-button
+    display block
+    position fixed
+    bottom 90px
+    right 0
+    width 44px
+    height 44px
+    z-index 9
+
+    @media only screen and (max-width 520px)
+        bottom 80px
+    -webkit-user-select none
+    -moz-user-select none
+    user-select none
+
+    html.input-filter-menu &
+    html.input-filter-modal &
+    html.input-filter-cinematic &
+    html.input-filter-intro &
+        pointer-events none
+
+    --hover-translate 4px
+
+    html:not(.is-mode-touch) &:hover
+        .button-inner
+            transform translateX(-4px)
+            background rgba(255, 255, 255, 0.2)
+
+            &::after
+                opacity 1
+
+            .icon-container
+                opacity 1
+
+    .button-inner
+        position absolute
+        top 0
+        left 0
+        width calc(100% + var(--hover-translate))
+        height 100%
+        background rgba(255, 255, 255, 0.1)
+        backdrop-filter blur(20px) saturate(180%)
+        -webkit-backdrop-filter blur(20px) saturate(180%)
+        border-radius 12px
+        transition transform 0.15s 0.15s, background 0.15s
+
+        html.input-filter-menu &,
+        html.input-filter-modal &,
+        html.input-filter-intro &
+        html.input-filter-cinematic &
+            transform translateX(100%)
+            transition-delay 0
+
+        &::after
+            content: ''
+            display block
+            position absolute
+            top 0
+            right 0
+            bottom 0
+            left 0
+            border-radius inherit
+            border 1px solid rgba(255, 255, 255, 0.25)
+            border-right none
+            opacity 1
+            transition opacity 0.15s
+
+        .icon-container
+            display flex
+            position absolute
+            align-items center
+            justify-content center
+            top 0
+            right 0
+            bottom 0
+            left 0
+            color rgba(255, 255, 255, 0.9)
+            opacity 0.85
+            transition opacity 0.15s
+
+            .icon
+                width 20px
+                height 20px

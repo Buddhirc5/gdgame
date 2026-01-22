@@ -1,0 +1,173 @@
+// Hand Tracking Toggle Button
+.hand-tracking-toggle
+    position fixed
+    top 20px
+    left 20px
+    z-index 100
+    width 44px
+    height 44px
+    padding 0
+    border none
+    border-radius 12px
+    background rgba(17, 17, 26, 0.7)
+    backdrop-filter blur(10px)
+    cursor pointer
+    transition all 0.3s ease
+    
+    &:hover
+        background rgba(17, 17, 26, 0.85)
+        transform scale(1.05)
+    
+    &.is-active
+        background linear-gradient(135deg, rgba(0, 255, 136, 0.3), rgba(0, 200, 255, 0.3))
+        box-shadow 0 0 20px rgba(0, 255, 136, 0.4)
+        
+        .hand-icon
+            color #00ff88
+            filter drop-shadow(0 0 6px rgba(0, 255, 136, 0.8))
+    
+    .button-inner
+        display flex
+        align-items center
+        justify-content center
+        width 100%
+        height 100%
+    
+    .icon-container
+        display flex
+        align-items center
+        justify-content center
+    
+    .hand-icon
+        width 24px
+        height 24px
+        color rgba(255, 255, 255, 0.9)
+        transition all 0.3s ease
+
+// Hand Tracking Camera Card
+.hand-tracking-card
+    position fixed
+    top 80px
+    left 20px
+    z-index 99
+    width 280px
+    border-radius 16px
+    background rgba(17, 17, 26, 0.85)
+    backdrop-filter blur(20px)
+    box-shadow 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)
+    overflow hidden
+    opacity 0
+    visibility hidden
+    transform translateY(-10px) scale(0.95)
+    transition all 0.3s cubic-bezier(0.4, 0, 0.2, 1)
+    pointer-events none
+    
+    &.is-visible
+        opacity 1
+        visibility visible
+        transform translateY(0) scale(1)
+        pointer-events auto
+    
+    .card-header
+        display flex
+        align-items center
+        justify-content space-between
+        padding 12px 16px
+        border-bottom 1px solid rgba(255, 255, 255, 0.1)
+        
+        .title
+            font-size 14px
+            font-weight 600
+            color rgba(255, 255, 255, 0.95)
+            letter-spacing 0.5px
+        
+        .close-btn
+            display flex
+            align-items center
+            justify-content center
+            width 24px
+            height 24px
+            padding 0
+            border none
+            border-radius 6px
+            background rgba(255, 255, 255, 0.1)
+            color rgba(255, 255, 255, 0.7)
+            cursor pointer
+            transition all 0.2s ease
+            
+            &:hover
+                background rgba(255, 68, 136, 0.3)
+                color #ff4488
+    
+    .card-body
+        position relative
+        width 100%
+        aspect-ratio 4/3
+        background #111
+        
+        video
+            position absolute
+            inset 0
+            width 100%
+            height 100%
+            object-fit cover
+            transform scaleX(-1)
+        
+        canvas
+            position absolute
+            inset 0
+            width 100%
+            height 100%
+            transform scaleX(-1)
+            pointer-events none
+    
+    .card-footer
+        padding 10px 16px
+        border-top 1px solid rgba(255, 255, 255, 0.1)
+        
+        .status
+            display block
+            font-size 12px
+            font-weight 500
+            color rgba(255, 255, 255, 0.6)
+            text-align center
+            transition color 0.3s ease
+    
+    .controls-hint
+        padding 8px 16px 12px
+        border-top 1px solid rgba(255, 255, 255, 0.05)
+        
+        .hint
+            font-size 11px
+            color rgba(255, 255, 255, 0.5)
+            line-height 1.6
+            text-align center
+
+// Status states
+.hand-tracking-card
+    &[data-status="tracking"]
+        .card-footer .status
+            color #00ff88
+    
+    &[data-status="error"]
+        .card-footer .status
+            color #ff4466
+
+// Responsive - hide on very small screens
+@media (max-width: 480px)
+    .hand-tracking-toggle
+        top 10px
+        left 10px
+        width 38px
+        height 38px
+    
+    .hand-tracking-card
+        top 60px
+        left 10px
+        width 240px
+
+// Hide in touch mode (it requires a camera which is better used full-screen on mobile)
+html.is-mode-touch
+    .hand-tracking-toggle,
+    .hand-tracking-card
+        display none

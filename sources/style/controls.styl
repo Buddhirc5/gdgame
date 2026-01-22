@@ -1,0 +1,76 @@
+.menu .contents .controls-content
+    .list
+        display flex
+        align-items center
+        justify-content center
+        white-space nowrap
+        
+        table
+            border-spacing 0 10px
+
+            @media only screen and (max-height 620px)
+                border-spacing 0 5px
+
+            @media only screen and (max-height 540px)
+                border-spacing 0 0
+
+        tr
+            td:first-child
+                text-align right
+                padding-right 15px
+
+        .key
+            display inline-block
+            padding 0 8px
+            height 24px
+            line-height 24px
+            background rgba(255, 255, 255, 0.12)
+            backdrop-filter blur(10px) saturate(180%)
+            -webkit-backdrop-filter blur(10px) saturate(180%)
+            border 1px solid rgba(255, 255, 255, 0.25)
+            border-radius 6px
+            font-weight 700
+            box-shadow 0 2px 8px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)
+
+        .is-gamepad-button
+            display none
+
+            @media only screen and (max-width 520px)
+                transform scale(0.8, 0.8)
+
+            @media only screen and (max-width 440px)
+                transform scale(0.7, 0.7)
+
+            &.is-playstation
+                .is-gamepad-default &
+                .is-gamepad-playstation &
+                    display inline-block
+
+            &.is-xbox
+                .is-gamepad-xbox &
+                    display inline-block
+
+            &.is-icon
+                background-size cover
+                vertical-align middle
+                
+                &.circle
+                    width 15px
+                    height 15px
+                    background-image url('../ui/controls/gamepad-circle.webp')
+
+                &.triangle
+                    width 16px
+                    height 15px
+                    background-image url('../ui/controls/gamepad-triangle.webp')
+
+                &.square
+                    width 15px
+                    height 15px
+                    background-image url('../ui/controls/gamepad-square.webp')
+
+                &.cross
+                    width 14px
+                    height 13px
+                    background-image url('../ui/controls/gamepad-cross.webp')
+        

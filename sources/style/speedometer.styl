@@ -1,0 +1,54 @@
+.speedometer
+    position fixed
+    bottom 30px
+    left 30px
+    z-index 10
+    pointer-events none
+    -webkit-user-select none
+    -moz-user-select none
+    user-select none
+
+    @media only screen and (max-width 520px)
+        bottom 20px
+        left 20px
+
+    .speedometer-inner
+        background rgba(255, 255, 255, 0.1)
+        backdrop-filter blur(20px) saturate(180%)
+        -webkit-backdrop-filter blur(20px) saturate(180%)
+        border 1px solid rgba(255, 255, 255, 0.25)
+        border-radius 16px
+        padding 16px 24px
+        box-shadow 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)
+        min-width 120px
+
+        @media only screen and (max-width 520px)
+            padding 12px 18px
+            border-radius 12px
+            min-width 100px
+
+    .speedometer-value
+        display flex
+        align-items baseline
+        gap 8px
+        color rgba(255, 255, 255, 0.95)
+        font-family "Nunito", sans-serif
+        font-weight 700
+
+        .js-speed-value
+            font-size 32px
+            line-height 1
+            letter-spacing -1px
+
+            @media only screen and (max-width 520px)
+                font-size 26px
+
+        .js-speed-unit
+            font-size 14px
+            opacity 0.7
+            font-weight 600
+            text-transform uppercase
+            letter-spacing 1px
+
+            @media only screen and (max-width 520px)
+                font-size 12px
