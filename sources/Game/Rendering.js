@@ -47,11 +47,12 @@ export class Rendering
         // Can be enabled with ?webgpu URL parameter for testing
         let forceWebGL = !forceWebGPU
         
-        // Log renderer mode
+        // Log renderer mode (v2 - WebGL default)
+        console.log('[Renderer] Version: 2.0 - WebGL default mode')
         if (!forceWebGL && navigator.gpu) {
-            console.log('Using WebGPU renderer (experimental)')
+            console.log('[Renderer] Using WebGPU (experimental)')
         } else {
-            console.log('Using WebGL renderer')
+            console.log('[Renderer] Using WebGL for stability')
             forceWebGL = true
         }
         
