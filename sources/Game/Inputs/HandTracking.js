@@ -28,6 +28,16 @@ export class HandTracking {
         this.video = document.querySelector('.js-hand-tracking-video')
         this.canvas = document.querySelector('.js-hand-tracking-canvas')
         this.statusElement = document.querySelector('.js-hand-tracking-status')
+        this.statusIndicator = document.querySelector('.js-hand-tracking-status-indicator')
+        this.cardBody = this.card ? this.card.querySelector('.card-body') : null
+        
+        // Control indicators
+        this.accelFill = document.querySelector('.js-hand-tracking-accel')
+        this.accelReverseFill = document.querySelector('.js-hand-tracking-accel-reverse')
+        this.steeringLeftFill = document.querySelectorAll('.js-hand-tracking-steering[data-direction="left"]')[0]
+        this.steeringRightFill = document.querySelectorAll('.js-hand-tracking-steering[data-direction="right"]')[0]
+        this.brakeIndicator = document.querySelector('.js-hand-tracking-brake-indicator')
+        this.boostIndicator = document.querySelector('.js-hand-tracking-boost-indicator')
 
         // MediaPipe
         this.handLandmarker = null
@@ -115,6 +125,9 @@ export class HandTracking {
         this.braking = 0
         this.boosting = 0
         this.handsCount = 0
+
+        // Reset UI indicators
+        this.updateUI()
 
         // Hide card
         if (this.card) this.card.classList.remove('is-visible')
@@ -361,10 +374,81 @@ export class HandTracking {
         if (this.statusElement) {
             this.statusElement.textContent = statusTexts[status] || status
         }
+
+        // Update card data attribute for styling
+        if (this.card) {
+            this.card.setAttribute('data-status', status)
+        }
+
+        // Update card body for tracking state
+        if (this.cardBody) {
+            if (status === 'tracking') {
+                this.cardBody.classList.add('is-tracking')
+            } else {
+                this.cardBody.classList.remove('is-tracking')
+            }
+        }
     }
 
     update() {
         // Called each frame from Inputs.update()
         // Detection runs in its own animation frame loop
+        
+        // Update UI indicators
+        this.updateUI()
+    }
+
+    updateUI() {
+        if (!this.enabled) return
+
+        // Update acceleration bar
+        if (this.accelFill && this.accelReverseFill) {
+            if (this.accelerating > 0) {
+                // Forward
+                this.accelFill.style.width = `${Math.abs(this.accelerating) * 50}%`
+                this.accelReverseFill.style.width = '0%'
+            } else if (this.accelerating < 0) {
+                // Reverse
+                this.accelFill.style.width = '0%'
+                this.accelReverseFill.style.width = `${Math.abs(this.accelerating) * 50}%`
+            } else {
+                this.accelFill.style.width = '0%'
+                this.accelReverseFill.style.width = '0%'
+            }
+        }
+
+        // Update steering bar
+        if (this.steeringLeftFill && this.steeringRightFill) {
+            if (this.steering < 0) {
+                // Left (inverted - show right fill)
+                this.steeringLeftFill.style.width = '0%'
+                this.steeringRightFill.style.width = `${Math.abs(this.steering) * 50}%`
+            } else if (this.steering > 0) {
+                // Right (inverted - show left fill)
+                this.steeringLeftFill.style.width = `${Math.abs(this.steering) * 50}%`
+                this.steeringRightFill.style.width = '0%'
+            } else {
+                this.steeringLeftFill.style.width = '0%'
+                this.steeringRightFill.style.width = '0%'
+            }
+        }
+
+        // Update brake indicator
+        if (this.brakeIndicator) {
+            if (this.braking > 0) {
+                this.brakeIndicator.classList.add('is-active')
+            } else {
+                this.brakeIndicator.classList.remove('is-active')
+            }
+        }
+
+        // Update boost indicator
+        if (this.boostIndicator) {
+            if (this.boosting > 0) {
+                this.boostIndicator.classList.add('is-active')
+            } else {
+                this.boostIndicator.classList.remove('is-active')
+            }
+        }
     }
 }
