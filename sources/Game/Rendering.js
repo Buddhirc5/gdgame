@@ -37,7 +37,30 @@ export class Rendering
 
     async setRenderer()
     {
-        this.renderer = new THREE.WebGPURenderer({ canvas: this.game.canvasElement, powerPreference: 'high-performance', forceWebGL: false, antialias: this.game.viewport.ratio < 2 })
+        // Check renderer mode from URL params
+        // Use ?webgpu to enable WebGPU (experimental), otherwise use WebGL for stability
+        const urlParams = new URLSearchParams(window.location.search)
+        const forceWebGPU = urlParams.has('webgpu')
+        
+        // Default to WebGL for production stability
+        // WebGPU has known issues with uniform buffer naming in production builds
+        // Can be enabled with ?webgpu URL parameter for testing
+        let forceWebGL = !forceWebGPU
+        
+        // Log renderer mode
+        if (!forceWebGL && navigator.gpu) {
+            console.log('Using WebGPU renderer (experimental)')
+        } else {
+            console.log('Using WebGL renderer')
+            forceWebGL = true
+        }
+        
+        this.renderer = new THREE.WebGPURenderer({ 
+            canvas: this.game.canvasElement, 
+            powerPreference: 'high-performance', 
+            forceWebGL: forceWebGL, 
+            antialias: this.game.viewport.ratio < 2 
+        })
         this.renderer.setSize(this.game.viewport.width, this.game.viewport.height)
         this.renderer.setPixelRatio(this.game.viewport.pixelRatio)
         this.renderer.sortObjects = true
