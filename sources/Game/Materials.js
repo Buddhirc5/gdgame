@@ -335,6 +335,10 @@ export class Materials
             material.premultipliedAlpha = premultipliedAlpha
             material.map = baseMaterial.map
             
+            // Ensure material name is set for proper identification
+            if(baseMaterial.name)
+                material.name = baseMaterial.name
+            
             return material
         }
 

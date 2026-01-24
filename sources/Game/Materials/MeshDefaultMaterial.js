@@ -30,6 +30,9 @@ export class MeshDefaultMaterial extends THREE.MeshLambertNodeMaterial
         this.wireframe = parameters.wireframe ?? false
         this.transparent = parameters.transparent ?? false
         this.shadowSide = parameters.shadowSide ?? THREE.FrontSide
+        
+        // Ensure material is marked for update to trigger proper WebGPU compilation
+        this.needsUpdate = true
 
         this.hasCoreShadows = parameters.hasCoreShadows ?? true
         this.hasDropShadows = parameters.hasDropShadows ?? true
@@ -129,8 +132,8 @@ export class MeshDefaultMaterial extends THREE.MeshLambertNodeMaterial
             if(this.hasReveal)
                 outputColor.assign(MeshDefaultMaterial.revealDiscardNodeBuilder(this.game, outputColor))
 
-            // Output
-            return vec4(outputColor, this._alphaNode)
-        })()
+        // Output
+        return vec4(outputColor, this._alphaNode)
+    })()
     }
 }
