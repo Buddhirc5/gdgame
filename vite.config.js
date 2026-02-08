@@ -20,7 +20,18 @@ export default {
     {
         outDir: '../dist', // Output in the dist/ folder
         emptyOutDir: true, // Empty the folder first
-        sourcemap: false // Add sourcemap
+        sourcemap: false, // No sourcemap for smaller bundles
+        target: 'esnext', // Modern browsers only — smaller output, no polyfills
+        minify: 'esbuild', // Fast minification (default, but explicit)
+        cssMinify: true,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'three-core': ['three/webgpu', 'three/tsl'],
+                    'physics': ['@dimforge/rapier3d'],
+                }
+            }
+        }
     },
     plugins:
     [

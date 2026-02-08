@@ -59,7 +59,7 @@ export class Rendering
             canvas: this.game.canvasElement,
             powerPreference: 'high-performance',
             forceWebGL: forceWebGL,
-            antialias: this.game.viewport.ratio < 2
+            antialias: false // Disabled for GPU performance; pixel ratio handles smoothing
         })
         this.renderer.setSize(this.game.viewport.width, this.game.viewport.height)
         this.renderer.setPixelRatio(this.game.viewport.pixelRatio)
@@ -96,14 +96,14 @@ export class Rendering
         const scenePassColor = scenePass.getTextureNode('output')
 
         this.bloomPass = bloom(scenePassColor)
-        this.bloomPass._nMips = this.game.quality.level === 0 ? 5 : 2
-        this.bloomPass.threshold.value = 1
-        this.bloomPass.strength.value = 0.25
+        this.bloomPass._nMips = 2 // Minimum mip levels for fast bloom
+        this.bloomPass.threshold.value = 1.2 // Higher threshold = fewer pixels need bloom
+        this.bloomPass.strength.value = 0.2
         this.bloomPass.smoothWidth.value = 1
 
         this.cheapDOFPass = cheapDOF(renderOutput(scenePass))
 
-        // Quality
+        // Quality — production always level 1 (no DOF pass, lightweight bloom only)
         const qualityChange = (level) =>
         {
             if(level === 0)
@@ -112,6 +112,7 @@ export class Rendering
             }
             else if(level === 1)
             {
+                // No DOF in low quality — just scene + bloom
                 this.postProcessing.outputNode = scenePassColor.add(this.bloomPass)
             }
 

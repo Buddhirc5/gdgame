@@ -20,7 +20,7 @@ export class Lighting
         this.colorUniform = uniform(color('#ffffff'))
         this.intensityUniform = uniform(1)
         this.count = 1
-        this.mapSize = this.game.quality.level === 0 ? 2048 : 512
+        this.mapSize = this.game.quality.level === 0 ? 1024 : 512 // Production uses level 1 = 512
         this.shadowAmplitude = this.game.view.optimalArea.radius
         this.depth = this.game.view.optimalArea.radius * 2
         this.shadowBias = -0.001
@@ -189,8 +189,9 @@ export class Lighting
         // Direction (for shaders)
         this.direction.setFromSpherical(this.spherical).normalize()
         
-        // Actual lights transform
-        const optimalRoundedPosition = this.game.view.optimalArea.position.clone()
+        // Actual lights transform (reuse vector to avoid GC)
+        if(!this._tempVec3) this._tempVec3 = new THREE.Vector3()
+        const optimalRoundedPosition = this._tempVec3.copy(this.game.view.optimalArea.position)
         // optimalRoundedPosition.x = Math.round(optimalRoundedPosition.x)
         // optimalRoundedPosition.y = Math.round(optimalRoundedPosition.y)
         // optimalRoundedPosition.z = Math.round(optimalRoundedPosition.z)

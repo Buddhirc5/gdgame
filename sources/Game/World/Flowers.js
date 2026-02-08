@@ -53,7 +53,7 @@ export class Flowers
         {
             const clusterPosition = reference.position
 
-            const clusterCount = 3 + Math.floor(rng() * 8)
+            const clusterCount = 2 + Math.floor(rng() * 4) // Reduced from 3-10 to 2-5 for performance
             // const clusterCount = 1
             for(let j = 0; j < clusterCount; j++)
             {
@@ -153,7 +153,7 @@ export class Flowers
     {
         this.mesh = new THREE.Mesh(this.geometry, this.material)
         // this.mesh.position.y = - 0.5
-        this.mesh.castShadow = true
+        this.mesh.castShadow = false // Disabled for GPU performance — flowers are tiny
         this.mesh.receiveShadow = true
         this.mesh.count = this.transformMatrices.length
         this.mesh.frustumCulled = false

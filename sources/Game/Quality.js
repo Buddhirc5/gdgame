@@ -10,7 +10,14 @@ export class Quality
         this.events = new Events()
 
         const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-        this.level = isMobile ? 1 : 0 // 0 = highest quality
+        const isProduction = import.meta.env.PROD
+
+        // Production: always use low quality (level 1) for smooth performance
+        // Development: high quality on desktop, low on mobile
+        if(isProduction)
+            this.level = 1
+        else
+            this.level = isMobile ? 1 : 0
 
         // Debug
         if(this.game.debug.active)

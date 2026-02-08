@@ -10,7 +10,7 @@ export class RainLines
     {
         this.game = Game.getInstance()
 
-        this.count = Math.pow(2, 11)
+        this.count = Math.pow(2, 9) // Reduced from 2^11 (2048) to 2^9 (512) for performance
         this.speed = 0.25
         this.achievementAchieved = this.game.achievements.groups.get('weatherRain')?.items[0].achieved
 

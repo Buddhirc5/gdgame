@@ -21,7 +21,7 @@ export class Confetti
 
         this.pool = []
         this.poolSize = 4
-        this.count = 500
+        this.count = 200 // Reduced from 500 for performance
         this.geometry = new THREE.PlaneGeometry(0.1, 0.2)
 
         this.colorsUniform = uniformArray([

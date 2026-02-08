@@ -9,7 +9,7 @@ export class Grass
     {
         this.game = Game.getInstance()
 
-        this.subdivisions = 280
+        this.subdivisions = 140 // Reduced from 280 for smooth performance (19,600 vs 78,400 blades)
         const halfExtent = this.game.view.optimalArea.radius
         this.size = halfExtent * 2
         this.count = this.subdivisions * this.subdivisions

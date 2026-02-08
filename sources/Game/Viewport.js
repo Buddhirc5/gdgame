@@ -21,7 +21,7 @@ export class Viewport
         this.ratio = this.width / this.height
 
         this.pixelRatioPure = window.devicePixelRatio
-        this.pixelRatioMax = 2
+        this.pixelRatioMax = 1 // Cap at 1x for maximum GPU performance
         this.pixelRatio = Math.min(this.pixelRatioPure, this.pixelRatioMax)
     }
 

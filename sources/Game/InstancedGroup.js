@@ -28,6 +28,7 @@ export class InstancedGroup
     setMeshes()
     {
         this.meshes = []
+        this._tempMatrix = new THREE.Matrix4() // Reusable matrix to avoid per-frame allocations
 
         this.group.traverse((_child) =>
         {
@@ -103,8 +104,9 @@ export class InstancedGroup
 
                 for(const instancedMesh of this.meshes)
                 {
-                    const finalMatrix = instancedMesh.localMatrix.clone().premultiply(_reference.matrixWorld)
-                    instancedMesh.instance.setMatrixAt(i, finalMatrix)
+                    // Reuse temp matrix instead of cloning every frame
+                    this._tempMatrix.copy(instancedMesh.localMatrix).premultiply(_reference.matrixWorld)
+                    instancedMesh.instance.setMatrixAt(i, this._tempMatrix)
                 }
             }
 

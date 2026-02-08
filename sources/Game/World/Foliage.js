@@ -33,7 +33,7 @@ export class Foliage
 
     setGeometry()
     {
-        const count = 80
+        const count = 40 // Reduced from 80 for GPU performance
         const planes = []
 
         for(let i = 0; i < count; i++)
