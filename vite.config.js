@@ -20,7 +20,21 @@ export default {
     {
         outDir: '../dist', // Output in the dist/ folder
         emptyOutDir: true, // Empty the folder first
-        sourcemap: false // Add sourcemap
+        sourcemap: false, // Add sourcemap
+        minify: 'terser', // Use terser instead of esbuild for better control
+        terserOptions: {
+            mangle: {
+                // Don't mangle property names - Three.js r183dev WebGPU/TSL
+                // relies on property names for uniform buffer naming.
+                // Mangling causes "bindingBufferundefined" and drawIndexed errors.
+                properties: false,
+            },
+            compress: {
+                // Keep class and function names for Three.js internals
+                keep_classnames: true,
+                keep_fnames: true,
+            },
+        },
     },
     plugins:
     [
