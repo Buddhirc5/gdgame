@@ -13,6 +13,12 @@
 
 **Summary:** The app uses **WebGL** by default (via Three.js WebGPU renderer in WebGL mode). WebGPU is experimental and enabled with `?webgpu` in the URL.
 
+### Hosting (live)
+
+In **production** (`npm run build` / Vercel), the renderer **always uses WebGL**. The `?webgpu` flag is ignored when hosted so the game works on all browsers and avoids WebGPU binding errors. In **development**, you can still add `?webgpu` to test WebGPU.
+
+**Vercel:** See [VERCEL.md](./VERCEL.md) for WebGL/WebGPU behavior, headers, and deploy notes.
+
 ---
 
 ## Build & Tooling

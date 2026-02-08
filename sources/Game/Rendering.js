@@ -37,30 +37,29 @@ export class Rendering
 
     async setRenderer()
     {
-        // Check renderer mode from URL params
-        // Use ?webgpu to enable WebGPU (experimental), otherwise use WebGL for stability
+        // Production (live host): always WebGL so deployment works everywhere
+        // Development: allow ?webgpu to test WebGPU
+        const isProduction = import.meta.env.PROD
         const urlParams = new URLSearchParams(window.location.search)
-        const forceWebGPU = urlParams.has('webgpu')
-        
-        // Default to WebGL for production stability
-        // WebGPU has known issues with uniform buffer naming in production builds
-        // Can be enabled with ?webgpu URL parameter for testing
-        let forceWebGL = !forceWebGPU
-        
-        // Log renderer mode (v2 - WebGL default)
-        console.log('[Renderer] Version: 2.0 - WebGL default mode')
-        if (!forceWebGL && navigator.gpu) {
-            console.log('[Renderer] Using WebGPU (experimental)')
+        const wantWebGPU = urlParams.has('webgpu')
+
+        let forceWebGL = true
+        if (!isProduction && wantWebGPU && navigator.gpu) {
+            forceWebGL = false
+            console.log('[Renderer] Dev: WebGPU (experimental)')
         } else {
-            console.log('[Renderer] Using WebGL for stability')
-            forceWebGL = true
+            if (isProduction) {
+                console.log('[Renderer] Production: WebGL (live host)')
+            } else {
+                console.log('[Renderer] Dev: WebGL')
+            }
         }
-        
-        this.renderer = new THREE.WebGPURenderer({ 
-            canvas: this.game.canvasElement, 
-            powerPreference: 'high-performance', 
-            forceWebGL: forceWebGL, 
-            antialias: this.game.viewport.ratio < 2 
+
+        this.renderer = new THREE.WebGPURenderer({
+            canvas: this.game.canvasElement,
+            powerPreference: 'high-performance',
+            forceWebGL: forceWebGL,
+            antialias: this.game.viewport.ratio < 2
         })
         this.renderer.setSize(this.game.viewport.width, this.game.viewport.height)
         this.renderer.setPixelRatio(this.game.viewport.pixelRatio)
