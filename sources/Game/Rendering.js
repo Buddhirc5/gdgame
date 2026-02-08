@@ -37,7 +37,30 @@ export class Rendering
 
     async setRenderer()
     {
-        this.renderer = new THREE.WebGPURenderer({ canvas: this.game.canvasElement, powerPreference: 'high-performance', forceWebGL: false, antialias: this.game.viewport.ratio < 2 })
+        // Production (live host): always WebGL so deployment works everywhere
+        // Development: allow ?webgpu to test WebGPU
+        const isProduction = import.meta.env.PROD
+        const urlParams = new URLSearchParams(window.location.search)
+        const wantWebGPU = urlParams.has('webgpu')
+
+        let forceWebGL = true
+        if (!isProduction && wantWebGPU && navigator.gpu) {
+            forceWebGL = false
+            console.log('[Renderer] Dev: WebGPU (experimental)')
+        } else {
+            if (isProduction) {
+                console.log('[Renderer] Production: WebGL (live host)')
+            } else {
+                console.log('[Renderer] Dev: WebGL')
+            }
+        }
+
+        this.renderer = new THREE.WebGPURenderer({
+            canvas: this.game.canvasElement,
+            powerPreference: 'high-performance',
+            forceWebGL: forceWebGL,
+            antialias: this.game.viewport.ratio < 2
+        })
         this.renderer.setSize(this.game.viewport.width, this.game.viewport.height)
         this.renderer.setPixelRatio(this.game.viewport.pixelRatio)
         this.renderer.sortObjects = true

@@ -30,7 +30,15 @@ THREE.Object3D.prototype.copy = function( source, recursive = true )
 
     this.animations = source.animations.slice();
 
-    // this.userData = JSON.parse( JSON.stringify( source.userData ) );
+    // Copy userData - required for WebGPU node materials to work properly
+    if ( source.userData && Object.keys( source.userData ).length > 0 ) {
+        try {
+            this.userData = JSON.parse( JSON.stringify( source.userData ) );
+        } catch ( e ) {
+            // If JSON serialization fails (e.g., circular references), do shallow copy
+            this.userData = Object.assign( {}, source.userData );
+        }
+    }
 
     if ( recursive === true ) {
 
