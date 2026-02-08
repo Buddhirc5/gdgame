@@ -7,17 +7,17 @@
 | Layer | Technology |
 |-------|------------|
 | **3D engine** | **Three.js** (r183dev, from GitHub) |
-| **Renderer** | **WebGPU renderer with WebGL fallback** — `THREE.WebGPURenderer` with `forceWebGL: true` by default, so production runs on **WebGL**. WebGPU is opt-in via `?webgpu`. |
+| **Renderer** | **WebGPU** (default) with **WebGL fallback** — `THREE.WebGPURenderer`. WebGPU is required because the TSL materials exceed WebGL's 16KB uniform block limit. WebGL fallback for older browsers only. |
 | **Shading / materials** | **TSL (Three.js Shading Language)** — `three/tsl` for node-based materials (e.g. `MeshDefaultMaterial`, bloom, DOF). |
 | **Post-processing** | Three.js PostProcessing + custom **Bloom** and **cheap DOF** passes. |
 
-**Summary:** The app uses **WebGL** by default (via Three.js WebGPU renderer in WebGL mode). WebGPU is experimental and enabled with `?webgpu` in the URL.
+**Summary:** The app uses **WebGPU** by default. The TSL node materials generate shader uniform blocks larger than 16KB, which exceeds WebGL's hard limit (`GL_MAX_UNIFORM_BLOCK_SIZE`). WebGPU has no such limit. WebGL is only used as a fallback when the browser lacks WebGPU support, and can be forced with `?webgl` in the URL for testing.
 
 ### Hosting (live)
 
-In **production** (`npm run build` / Vercel), the renderer **always uses WebGL**. The `?webgpu` flag is ignored when hosted so the game works on all browsers and avoids WebGPU binding errors. In **development**, you can still add `?webgpu` to test WebGPU.
+Production builds on Vercel use **WebGPU** (same as dev). The WebGPU validation warnings in the console (`Binding size ... is zero`) are harmless Three.js internals and are suppressed by the error filter in `index.js`. Add `?webgl` to force WebGL for testing (some shaders will break due to the 16KB limit).
 
-**Vercel:** See [VERCEL.md](./VERCEL.md) for WebGL/WebGPU behavior, headers, and deploy notes.
+**Vercel:** See [VERCEL.md](./VERCEL.md) for headers, deploy notes, and troubleshooting.
 
 ---
 

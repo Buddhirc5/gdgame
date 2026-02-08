@@ -1,41 +1,47 @@
-# Vercel hosting — WebGL / WebGPU
+# Vercel hosting
 
-This project is set up to run correctly on Vercel. Production uses **WebGL** so the game works in all supported browsers.
+This project is configured to deploy on Vercel. Production uses **WebGPU** (the same renderer as development).
 
-## Renderer (WebGL vs WebGPU)
+## Why WebGPU, not WebGL?
+
+The TSL node materials generate shader uniform blocks larger than **16KB**. WebGL has a hard limit (`GL_MAX_UNIFORM_BLOCK_SIZE = 16384`), causing shader compilation failures. WebGPU has no such limit and is what the codebase was designed for.
 
 | Environment | Renderer | Notes |
-|-------------|----------|--------|
-| **Production (Vercel)** | **WebGL** | Forced in code (`import.meta.env.PROD`). No WebGPU so no binding errors. |
-| **Development** | WebGL by default | Add `?webgpu` to the URL to test WebGPU locally. |
+|-------------|----------|-------|
+| **Production (Vercel)** | **WebGPU** | Default. Required for TSL materials. |
+| **Fallback** | WebGL | Only when browser lacks WebGPU. Some shaders will break. |
+| **Force WebGL** | WebGL | Add `?webgl` to URL (for testing only). |
 
-There is no “version” of WebGL to configure: the browser provides WebGL 2 (or WebGL 1 fallback). Three.js uses it via `THREE.WebGPURenderer` with `forceWebGL: true` in production.
+## WebGPU console warnings
+
+You will see `Binding size ... is zero` warnings in the console. These are **harmless** Three.js WebGPU validation messages and are suppressed by the error filter in `sources/index.js`. They do not affect rendering.
 
 ## Vercel configuration
 
 ### `vercel.json`
 
-- **installCommand**: `npm install --legacy-peer-deps` — matches local install (Vite 7 + plugins).
-- **rewrites**: All routes → `/index.html` for the SPA; static files in `dist/` are still served as files.
-- **Headers**
-  - **COOP / COEP** on all responses: needed for optional WebGPU/WASM features and cross-origin isolation; safe for WebGL.
-  - **index.html**: `Cache-Control: public, max-age=0, must-revalidate` — users get the latest HTML and JS after each deploy.
-  - **/assets/** and **/static/** : long-lived immutable cache for hashed assets.
-  - **.wasm**: `Content-Type: application/wasm` and long cache for Rapier.
+- **installCommand**: `npm install --legacy-peer-deps` (Vite 7 + plugins)
+- **rewrites**: All routes -> `/index.html` (SPA); static files served directly
+- **Headers**:
+  - `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` on all responses (required for WASM/SharedArrayBuffer)
+  - `index.html`: `Cache-Control: max-age=0, must-revalidate` (users always get latest build)
+  - `/assets/*` and `/static/*`: immutable long cache (hashed filenames)
+  - `.wasm`: correct `Content-Type` and long cache
 
 ### Node version
 
-- **package.json** `"engines": { "node": ">=20.0.0" }` so Vercel uses a compatible Node (e.g. 20.x) for install and build.
+`package.json` has `"engines": { "node": ">=20.0.0" }`.
 
 ## After deploy
 
-1. Open the live URL and hard refresh (or use incognito) so the browser doesn’t use an old cached bundle.
-2. In the console you should see: `[Renderer] Production: WebGL (live host)`.
-3. The canvas should not show `data-engine="... webgpu"` in production; the app is using WebGL.
+1. Open the live URL in a **WebGPU-capable browser** (Chrome 113+, Edge 113+, Firefox 141+, Safari 18.2+).
+2. Hard refresh or use incognito to avoid cached old bundles.
+3. Console should show: `[Renderer] Using WebGPU`.
+4. If the browser lacks WebGPU, it falls back to WebGL automatically (some visual glitches expected).
 
-## Optional: force redeploy
+## Force redeploy
 
-If the live site still looks like the old build:
+If the live site still shows old code:
 
-- Vercel dashboard → your project → Deployments → … on latest → **Redeploy** (no cache).
-- Or push an empty commit: `git commit --allow-empty -m "redeploy" && git push`.
+- Vercel dashboard -> Deployments -> Redeploy (no cache)
+- Or: `git commit --allow-empty -m "redeploy" && git push`

@@ -37,22 +37,27 @@ export class Rendering
 
     async setRenderer()
     {
-        // Production (live host): always WebGL so deployment works everywhere
-        // Development: allow ?webgpu to test WebGPU
-        const isProduction = import.meta.env.PROD
+        // This codebase uses TSL node materials that generate uniform blocks > 16KB.
+        // WebGL has a hard 16KB limit (GL_MAX_UNIFORM_BLOCK_SIZE) which breaks those shaders.
+        // WebGPU does not have this limit and is what the project was designed for.
+        //
+        // Strategy:
+        //   - Use WebGPU when the browser supports it (default)
+        //   - Fall back to WebGL only when WebGPU is unavailable (older browsers)
+        //   - ?webgl in URL forces WebGL (for testing)
         const urlParams = new URLSearchParams(window.location.search)
-        const wantWebGPU = urlParams.has('webgpu')
+        const forceWebGLParam = urlParams.has('webgl')
+        
+        let forceWebGL = false
 
-        let forceWebGL = true
-        if (!isProduction && wantWebGPU && navigator.gpu) {
-            forceWebGL = false
-            console.log('[Renderer] Dev: WebGPU (experimental)')
+        if (forceWebGLParam) {
+            forceWebGL = true
+            console.log('[Renderer] Forced WebGL via URL param')
+        } else if (!navigator.gpu) {
+            forceWebGL = true
+            console.log('[Renderer] WebGPU not available, falling back to WebGL')
         } else {
-            if (isProduction) {
-                console.log('[Renderer] Production: WebGL (live host)')
-            } else {
-                console.log('[Renderer] Dev: WebGL')
-            }
+            console.log('[Renderer] Using WebGPU')
         }
 
         this.renderer = new THREE.WebGPURenderer({
